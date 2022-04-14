@@ -1,7 +1,9 @@
 use std::fmt;
 
+use serde::Deserialize;
+
 /// The different types an attachment can have.
-#[derive(Debug, Copy, Clone, PartialEq)]
+#[derive(Debug, Copy, Clone, PartialEq, Deserialize)]
 pub enum AttachmentType {
     /// (default) A standard attachment without special meaning.
     Attachment,
@@ -37,8 +39,9 @@ impl AttachmentType {
     }
 }
 
-#[derive(Clone, PartialEq)]
 /// Represents an attachment item.
+#[derive(Clone, PartialEq, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct Attachment {
     /// The actual attachment data.
     pub buffer: Vec<u8>,

@@ -90,6 +90,7 @@ fn is_false(val: &bool) -> bool {
 /// Refer to the [Sessions](https://develop.sentry.dev/sdk/sessions/) documentation
 /// for more details.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SessionUpdate<'a> {
     /// The session identifier.
     #[serde(rename = "sid", default = "Uuid::new_v4")]
@@ -169,6 +170,7 @@ pub struct SessionAggregateItem {
 /// For *request-mode* sessions, sessions will be aggregated instead of being
 /// sent as individual updates.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct SessionAggregates<'a> {
     /// A batch of sessions that were started.
     #[serde(default)]

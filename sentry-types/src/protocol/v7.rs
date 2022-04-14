@@ -1510,6 +1510,7 @@ mod event {
 
 /// Represents a full event for Sentry.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct Event<'a> {
     /// The ID of the event
     #[serde(default = "event::default_id", serialize_with = "event::serialize_id")]
@@ -1895,6 +1896,7 @@ impl fmt::Display for SpanStatus {
 
 /// Represents a tracing transaction.
 #[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
+#[serde(deny_unknown_fields)]
 pub struct Transaction<'a> {
     /// The ID of the event
     #[serde(default = "event::default_id", serialize_with = "event::serialize_id")]

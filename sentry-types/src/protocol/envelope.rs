@@ -1,5 +1,10 @@
-use std::io::Write;
+use std::{
+    fs::File,
+    io::{BufReader, Write},
+    path::Path,
+};
 
+use serde::Deserialize;
 use uuid::Uuid;
 
 use super::v7::{Attachment, Event, SessionAggregates, SessionUpdate, Transaction};
@@ -8,9 +13,10 @@ use super::v7::{Attachment, Event, SessionAggregates, SessionUpdate, Transaction
 ///
 /// See the [documentation on Items](https://develop.sentry.dev/sdk/envelopes/#items)
 /// for more details.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Deserialize, PartialEq)]
 #[non_exhaustive]
 #[allow(clippy::large_enum_variant)]
+#[serde(untagged)]
 pub enum EnvelopeItem {
     /// An Event Item.
     ///
@@ -230,6 +236,25 @@ impl Envelope {
 
         Ok(())
     }
+
+    /// Creates a new Envelope from reader.
+    pub fn from_reader<R: std::io::BufRead>(reader: R) -> std::io::Result<Envelope> {
+        let mut envelope = Envelope::new();
+        // Ignore envelope header, as the event_id will eventually come from event or transaction item
+        for line in reader.lines().skip(1) {
+            if let Ok(item) = serde_json::from_str::<EnvelopeItem>(&line?) {
+                envelope.add_item(item);
+            }
+        }
+        Ok(envelope)
+    }
+
+    /// Creates a new Envelope from path.
+    pub fn from_path<P: AsRef<Path>>(path: P) -> std::io::Result<Envelope> {
+        let file = File::open(path)?;
+        let reader = BufReader::new(file);
+        Envelope::from_reader(reader)
+    }
 }
 
 impl From<Event<'static>> for Envelope {
@@ -297,6 +322,21 @@ mod test {
     }
 
     #[test]
+    fn test_deserialize_event() {
+        let event_id = Uuid::parse_str("22d00b3f-d1b1-4b5d-8d20-49d138cd8a9c").unwrap();
+        let timestamp = timestamp("2020-07-20T14:51:14.296Z");
+        let event = Event {
+            event_id,
+            timestamp,
+            ..Default::default()
+        };
+        let envelope: Envelope = event.into();
+        let serialized = to_str(envelope);
+        let deserialized = Envelope::from_reader(serialized.as_bytes()).unwrap();
+        assert_eq!(serialized, to_str(deserialized))
+    }
+
+    #[test]
     fn test_session() {
         let session_id = Uuid::parse_str("22d00b3f-d1b1-4b5d-8d20-49d138cd8a9c").unwrap();
         let started = timestamp("2020-07-20T14:51:14.296Z");
@@ -329,6 +369,34 @@ mod test {
     }
 
     #[test]
+    fn test_deserialize_session() {
+        let session_id = Uuid::parse_str("22d00b3f-d1b1-4b5d-8d20-49d138cd8a9c").unwrap();
+        let started = timestamp("2020-07-20T14:51:14.296Z");
+        let session = SessionUpdate {
+            session_id,
+            distinct_id: Some("foo@bar.baz".to_owned()),
+            sequence: None,
+            timestamp: None,
+            started,
+            init: true,
+            duration: Some(1.234),
+            status: SessionStatus::Ok,
+            errors: 123,
+            attributes: SessionAttributes {
+                release: "foo-bar@1.2.3".into(),
+                environment: Some("production".into()),
+                ip_address: None,
+                user_agent: None,
+            },
+        };
+        let mut envelope = Envelope::new();
+        envelope.add_item(session);
+        let serialized = to_str(envelope);
+        let deserialized = Envelope::from_reader(serialized.as_bytes()).unwrap();
+        assert_eq!(serialized, to_str(deserialized))
+    }
+
+    #[test]
     fn test_transaction() {
         let event_id = Uuid::parse_str("22d00b3f-d1b1-4b5d-8d20-49d138cd8a9c").unwrap();
         let span_id = "d42cee9fc3e74f5c".parse().unwrap();
@@ -354,5 +422,29 @@ mod test {
 {"event_id":"22d00b3fd1b14b5d8d2049d138cd8a9c","start_timestamp":1595256674.296,"spans":[{"span_id":"d42cee9fc3e74f5c","trace_id":"335e53d614474acc9f89e632b776cc28","start_timestamp":1595256674.296}]}
 "#
         )
+    }
+
+    #[test]
+    fn test_deserialize_transaction() {
+        let event_id = Uuid::parse_str("22d00b3f-d1b1-4b5d-8d20-49d138cd8a9c").unwrap();
+        let span_id = "d42cee9fc3e74f5c".parse().unwrap();
+        let trace_id = "335e53d614474acc9f89e632b776cc28".parse().unwrap();
+        let start_timestamp = timestamp("2020-07-20T14:51:14.296Z");
+        let spans = vec![Span {
+            span_id,
+            trace_id,
+            start_timestamp,
+            ..Default::default()
+        }];
+        let transaction = Transaction {
+            event_id,
+            start_timestamp,
+            spans,
+            ..Default::default()
+        };
+        let envelope: Envelope = transaction.into();
+        let serialized = to_str(envelope);
+        let deserialized = Envelope::from_reader(serialized.as_bytes()).unwrap();
+        assert_eq!(serialized, to_str(deserialized))
     }
 }
