@@ -75,7 +75,7 @@ mod model_support {
 
 /// Returns the server name (hostname) if available.
 pub fn server_name() -> Option<String> {
-    hostname::get().ok().and_then(|s| s.into_string().ok())
+    Some("WASM".to_owned())
 }
 
 /// Returns the OS context
