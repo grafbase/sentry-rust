@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use reqwest_::{header as ReqwestHeaders, Client as ReqwestClient, Proxy, StatusCode};
+use reqwest_::{header as ReqwestHeaders, Client as ReqwestClient, StatusCode};
 
 use super::tokio_thread::TransportThread;
 
@@ -32,26 +32,26 @@ impl ReqwestHttpTransport {
     fn new_internal(options: &ClientOptions, client: Option<ReqwestClient>) -> Self {
         let client = client.unwrap_or_else(|| {
             let mut builder = reqwest_::Client::builder();
-            if let Some(url) = options.http_proxy.as_ref() {
-                match Proxy::http(url.as_ref()) {
-                    Ok(proxy) => {
-                        builder = builder.proxy(proxy);
-                    }
-                    Err(err) => {
-                        sentry_debug!("invalid proxy: {:?}", err);
-                    }
-                }
-            };
-            if let Some(url) = options.https_proxy.as_ref() {
-                match Proxy::https(url.as_ref()) {
-                    Ok(proxy) => {
-                        builder = builder.proxy(proxy);
-                    }
-                    Err(err) => {
-                        sentry_debug!("invalid proxy: {:?}", err);
-                    }
-                }
-            };
+            // if let Some(url) = options.http_proxy.as_ref() {
+            //     match Proxy::http(url.as_ref()) {
+            //         Ok(proxy) => {
+            //             builder = builder.proxy(proxy);
+            //         }
+            //         Err(err) => {
+            //             sentry_debug!("invalid proxy: {:?}", err);
+            //         }
+            //     }
+            // };
+            // if let Some(url) = options.https_proxy.as_ref() {
+            //     // match Proxy::https(url.as_ref()) {
+            //     //     Ok(proxy) => {
+            //     //         builder = builder.proxy(proxy);
+            //     //     }
+            //     //     Err(err) => {
+            //     //         sentry_debug!("invalid proxy: {:?}", err);
+            //     //     }
+            //     // }
+            // };
             builder.build().unwrap()
         });
         let dsn = options.dsn.as_ref().unwrap();
