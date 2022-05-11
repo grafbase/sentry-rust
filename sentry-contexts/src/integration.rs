@@ -4,6 +4,8 @@ use sentry_core::protocol::map::Entry;
 use sentry_core::protocol::Event;
 use sentry_core::{ClientOptions, Integration};
 
+use crate::utils::{device_context, os_context, rust_context, server_name};
+
 /// Adds Contexts to Sentry Events.
 ///
 /// This integration is enabled by default in `sentry` and adds `device`, `os`
