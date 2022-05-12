@@ -35,8 +35,14 @@ impl Drop for Session {
     }
 }
 
-#[derive(Debug, PartialEq, Eq, Hash)]
+#[derive(Debug, PartialEq, Eq)]
 pub struct HashTime(pub wasm_timer::SystemTime);
+
+impl std::hash::Hash for HashTime {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.0.hash(state);
+    }
+}
 
 impl Session {
     pub fn from_stack(stack: &StackLayer) -> Option<Self> {
