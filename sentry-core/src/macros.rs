@@ -57,6 +57,7 @@ macro_rules! sentry_debug {
     ($($arg:tt)*) => {
         #[cfg(feature = "debug-logs")] {
             ::log_::debug!(target: "sentry", $($arg)*);
+            worker::console_log!($($arg)*)
         }
         #[cfg(not(feature = "debug-logs"))] {
             $crate::Hub::with(|hub| {
@@ -65,6 +66,7 @@ macro_rules! sentry_debug {
                     eprintln!($($arg)*);
                 }
             });
+            worker::console_log!($($arg)*)
         }
     }
 }
