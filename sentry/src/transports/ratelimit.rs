@@ -1,4 +1,4 @@
-use httpdate::parse_http_date;
+// use httpdate::parse_http_date;
 use std::time::Duration;
 use wasm_timer::SystemTime;
 
@@ -25,8 +25,9 @@ impl RateLimiter {
     pub fn update_from_retry_after(&mut self, header: &str) {
         let new_time = if let Ok(value) = header.parse::<f64>() {
             SystemTime::now() + Duration::from_secs(value.ceil() as u64)
-        } else if let Ok(value) = parse_http_date(header) {
-            SystemTime::from(value)
+        // TODO: consider other way to implement this
+        // } else if let Ok(value) = parse_http_date(header) {
+        //     value
         } else {
             SystemTime::now() + Duration::from_secs(60)
         };
