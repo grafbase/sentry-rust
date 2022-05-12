@@ -207,6 +207,10 @@ impl SessionFlusher {
         let queue = Arc::new(Mutex::new(Default::default()));
         #[allow(clippy::mutex_atomic)]
         let shutdown = Arc::new((Mutex::new(false), Condvar::new()));
+        let worker_transport = transport.clone();
+        let worker_queue = queue.clone();
+
+        SessionFlusher::flush_queue_internal(worker_queue.lock().unwrap(), &worker_transport);
 
         // TODO: does this affect anything on a single threaded env?
 
@@ -216,29 +220,7 @@ impl SessionFlusher {
         // let worker = std::thread::Builder::new()
         //     .name("sentry-session-flusher".into())
         //     .spawn(move || {
-        //         let (lock, cvar) = worker_shutdown.as_ref();
-        //         let mut shutdown = lock.lock().unwrap();
-        //         // check this immediately, in case the main thread is already shutting down
-        //         if *shutdown {
-        //             return;
-        //         }
-        //         let mut last_flush = Instant::now();
-        //         loop {
-        //             let timeout = FLUSH_INTERVAL
-        //                 .checked_sub(last_flush.elapsed())
-        //                 .unwrap_or_else(|| Duration::from_secs(0));
-        //             shutdown = cvar.wait_timeout(shutdown, timeout).unwrap().0;
-        //             if *shutdown {
-        //                 return;
-        //             }
-        //             if last_flush.elapsed() < FLUSH_INTERVAL {
-        //                 continue;
-        //             }
-        //             SessionFlusher::flush_queue_internal(
-        //                 worker_queue.lock().unwrap(),
-        //                 &worker_transport,
-        //             );
-        //             last_flush = Instant::now();
+        //
         //         }
         //     })
         //     .unwrap();
