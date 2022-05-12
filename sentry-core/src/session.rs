@@ -198,7 +198,6 @@ pub(crate) struct SessionFlusher {
     mode: SessionMode,
     queue: Arc<Mutex<SessionQueue>>,
     shutdown: Arc<(Mutex<bool>, Condvar)>,
-    worker: Option<JoinHandle<()>>,
 }
 
 impl SessionFlusher {
@@ -207,30 +206,12 @@ impl SessionFlusher {
         let queue = Arc::new(Mutex::new(Default::default()));
         #[allow(clippy::mutex_atomic)]
         let shutdown = Arc::new((Mutex::new(false), Condvar::new()));
-        let worker_transport = transport.clone();
-        let worker_queue = queue.clone();
-
-        SessionFlusher::flush_queue_internal(worker_queue.lock().unwrap(), &worker_transport);
-
-        // TODO: does this affect anything on a single threaded env?
-
-        // let worker_transport = transport.clone();
-        // let worker_queue = queue.clone();
-        // let worker_shutdown = shutdown.clone();
-        // let worker = std::thread::Builder::new()
-        //     .name("sentry-session-flusher".into())
-        //     .spawn(move || {
-        //
-        //         }
-        //     })
-        //     .unwrap();
 
         Self {
             transport,
             mode,
             queue,
             shutdown,
-            worker: None,
         }
     }
 
@@ -346,9 +327,9 @@ impl Drop for SessionFlusher {
         *lock.lock().unwrap() = true;
         cvar.notify_one();
 
-        if let Some(worker) = self.worker.take() {
-            worker.join().ok();
-        }
+        // if let Some(worker) = self.worker.take() {
+        //     worker.join().ok();
+        // }
         SessionFlusher::flush_queue_internal(self.queue.lock().unwrap(), &self.transport);
     }
 }
