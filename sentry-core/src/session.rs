@@ -208,7 +208,7 @@ impl SessionFlusher {
         #[allow(clippy::mutex_atomic)]
         let shutdown = Arc::new((Mutex::new(false), Condvar::new()));
 
-        // TODO: does this effect anything on a single threaded env?
+        // TODO: does this affect anything on a single threaded env?
 
         // let worker_transport = transport.clone();
         // let worker_queue = queue.clone();
