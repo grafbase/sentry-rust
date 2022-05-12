@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 use std::fmt;
 use std::str::FromStr;
-use std::time::SystemTime;
+use wasm_timer::SystemTime;
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
