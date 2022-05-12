@@ -26,7 +26,7 @@ impl RateLimiter {
         let new_time = if let Ok(value) = header.parse::<f64>() {
             SystemTime::now() + Duration::from_secs(value.ceil() as u64)
         } else if let Ok(value) = parse_http_date(header) {
-            value
+            SystemTime::from(value)
         } else {
             SystemTime::now() + Duration::from_secs(60)
         };
