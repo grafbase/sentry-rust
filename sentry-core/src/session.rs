@@ -5,7 +5,8 @@
 use std::collections::HashMap;
 use std::sync::{Arc, Condvar, Mutex, MutexGuard};
 use std::thread::JoinHandle;
-use std::time::{Duration, Instant, SystemTime};
+use std::time::Duration;
+use wasm_timer::{Instant, SystemTime};
 
 use crate::client::TransportArc;
 use crate::clientoptions::SessionMode;

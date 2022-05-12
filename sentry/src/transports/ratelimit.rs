@@ -1,5 +1,6 @@
 use httpdate::parse_http_date;
-use std::time::{Duration, SystemTime};
+use std::time::Duration;
+use wasm_timer::SystemTime;
 
 use crate::protocol::EnvelopeItem;
 use crate::Envelope;
