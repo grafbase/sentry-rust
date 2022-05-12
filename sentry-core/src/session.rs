@@ -35,6 +35,9 @@ impl Drop for Session {
     }
 }
 
+#[derive(Debug, PartialEq, Eq, Hash)]
+pub struct HashTime(pub wasm_timer::SystemTime);
+
 impl Session {
     pub fn from_stack(stack: &StackLayer) -> Option<Self> {
         let client = stack.client.as_ref()?;
@@ -144,7 +147,7 @@ impl From<AggregatedSessions> for EnvelopeItem {
             .buckets
             .into_iter()
             .map(|(key, counts)| SessionAggregateItem {
-                started: key.started,
+                started: key.started.0,
                 distinct_id: key.distinct_id,
                 exited: counts.exited,
                 errored: counts.errored,
@@ -163,7 +166,7 @@ impl From<AggregatedSessions> for EnvelopeItem {
 
 #[derive(Debug, PartialEq, Eq, Hash)]
 struct AggregationKey {
-    started: SystemTime,
+    started: HashTime,
     distinct_id: Option<String>,
 }
 
@@ -266,7 +269,7 @@ impl SessionFlusher {
             .unwrap();
 
         let key = AggregationKey {
-            started,
+            started: HashTime(started),
             distinct_id: session_update.distinct_id,
         };
 
