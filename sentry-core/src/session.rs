@@ -40,7 +40,11 @@ pub struct HashTime(pub wasm_timer::SystemTime);
 
 impl std::hash::Hash for HashTime {
     fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
-        self.0.hash(state);
+        match self.0.duration_since(SystemTime::UNIX_EPOCH) {
+            Ok(duration) => duration.hash(state),
+            // this will happen only if our time is earlier than UNIX_EPOCH
+            Err(_) => 0.hash(state),
+        }
     }
 }
 
