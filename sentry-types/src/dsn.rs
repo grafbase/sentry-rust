@@ -49,7 +49,7 @@ impl Scheme {
 }
 
 impl fmt::Display for Scheme {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "{}",
@@ -146,7 +146,7 @@ impl Dsn {
 }
 
 impl fmt::Display for Dsn {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}://{}:", self.scheme, self.public_key)?;
         if let Some(ref secret_key) = self.secret_key {
             write!(f, "{}", secret_key)?;
@@ -163,7 +163,7 @@ impl fmt::Display for Dsn {
 impl FromStr for Dsn {
     type Err = ParseDsnError;
 
-    fn from_str(s: &str) -> Result<Dsn, ParseDsnError> {
+    fn from_str(s: &str) -> Result<Self, ParseDsnError> {
         let url = Url::parse(s).map_err(|_| ParseDsnError::InvalidUrl)?;
 
         if url.path() == "/" {
@@ -200,7 +200,7 @@ impl FromStr for Dsn {
             None => return Err(ParseDsnError::InvalidUrl),
         };
 
-        Ok(Dsn {
+        Ok(Self {
             scheme,
             public_key,
             secret_key,

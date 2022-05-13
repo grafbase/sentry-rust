@@ -65,7 +65,7 @@ pub mod ts_seconds_float {
     impl<'de> de::Visitor<'de> for SecondsTimestampVisitor {
         type Value = SystemTime;
 
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(formatter, "a unix timestamp")
         }
 
@@ -150,7 +150,7 @@ pub mod ts_rfc3339 {
     impl<'de> de::Visitor<'de> for Rfc3339Deserializer {
         type Value = SystemTime;
 
-        fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        fn expecting(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(formatter, "an RFC3339 timestamp")
         }
 

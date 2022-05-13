@@ -43,25 +43,25 @@ pub enum EnvelopeItem {
 
 impl From<Event<'static>> for EnvelopeItem {
     fn from(event: Event<'static>) -> Self {
-        EnvelopeItem::Event(event)
+        Self::Event(event)
     }
 }
 
 impl From<SessionUpdate<'static>> for EnvelopeItem {
     fn from(session: SessionUpdate<'static>) -> Self {
-        EnvelopeItem::SessionUpdate(session)
+        Self::SessionUpdate(session)
     }
 }
 
 impl From<SessionAggregates<'static>> for EnvelopeItem {
     fn from(aggregates: SessionAggregates<'static>) -> Self {
-        EnvelopeItem::SessionAggregates(aggregates)
+        Self::SessionAggregates(aggregates)
     }
 }
 
 impl From<Transaction<'static>> for EnvelopeItem {
     fn from(transaction: Transaction<'static>) -> Self {
-        EnvelopeItem::Transaction(transaction)
+        Self::Transaction(transaction)
     }
 }
 
@@ -95,7 +95,7 @@ pub struct Envelope {
 
 impl Envelope {
     /// Creates a new empty Envelope.
-    pub fn new() -> Envelope {
+    pub fn new() -> Self {
         Default::default()
     }
 
@@ -116,7 +116,7 @@ impl Envelope {
     }
 
     /// Create an [`Iterator`] over all the [`EnvelopeItem`]s.
-    pub fn items(&self) -> EnvelopeItemIter {
+    pub fn items(&self) -> EnvelopeItemIter<'_> {
         EnvelopeItemIter {
             inner: self.items.iter(),
         }
@@ -152,7 +152,7 @@ impl Envelope {
     where
         P: FnMut(&EnvelopeItem) -> bool,
     {
-        let mut filtered = Envelope::new();
+        let mut filtered = Self::new();
         for item in self.items {
             if predicate(&item) {
                 filtered.add_item(item);

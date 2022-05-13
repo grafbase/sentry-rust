@@ -42,10 +42,10 @@ impl str::FromStr for SessionStatus {
 
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         Ok(match string {
-            "ok" => SessionStatus::Ok,
-            "crashed" => SessionStatus::Crashed,
-            "abnormal" => SessionStatus::Abnormal,
-            "exited" => SessionStatus::Exited,
+            "ok" => Self::Ok,
+            "crashed" => Self::Crashed,
+            "abnormal" => Self::Abnormal,
+            "exited" => Self::Exited,
             _ => return Err(ParseSessionStatusError),
         })
     }

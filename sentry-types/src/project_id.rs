@@ -35,7 +35,7 @@ impl ProjectId {
 }
 
 impl fmt::Display for ProjectId {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.value())
     }
 }
@@ -81,13 +81,13 @@ impl_try_from!(i64);
 impl FromStr for ProjectId {
     type Err = ParseProjectIdError;
 
-    fn from_str(s: &str) -> Result<ProjectId, ParseProjectIdError> {
+    fn from_str(s: &str) -> Result<Self, ParseProjectIdError> {
         if s.is_empty() {
             return Err(ParseProjectIdError::EmptyValue);
         }
 
         match s.parse::<u64>() {
-            Ok(val) => Ok(ProjectId::new(val)),
+            Ok(val) => Ok(Self::new(val)),
             Err(_) => Err(ParseProjectIdError::InvalidValue),
         }
     }
