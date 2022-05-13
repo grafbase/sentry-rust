@@ -12,7 +12,7 @@ pub enum SentryError {
     #[error("invalid sentry ingest url")]
     InvalidUrl,
     #[error("the call to sentry returned an error")]
-    Request(Error),
+    Request(surf::Error),
     #[error("could not write the given envelope")]
     WriteEnvelope,
 }
