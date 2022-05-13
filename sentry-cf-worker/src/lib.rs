@@ -17,11 +17,8 @@ pub enum SentryError {
     WriteEnvelope,
 }
 
-pub async fn send_envelope(
-    sentry_ingest_url: String,
-    envelope: Envelope,
-) -> Result<(), SentryError> {
-    let dsn = sentry_ingest_url
+pub async fn send_envelope(raw_dsn: String, envelope: Envelope) -> Result<(), SentryError> {
+    let dsn = raw_dsn
         .clone()
         .into_dsn()
         .map_err(|_| SentryError::InvalidUrl)?
