@@ -7,7 +7,7 @@ pub use sentry_core::Level;
 
 static SENTRY_AUTH_HEADER: &str = "X-Sentry-Auth";
 
-#[derive(Error)]
+#[derive(Debug, Error)]
 pub enum SentryError {
     #[error("invalid sentry ingest url")]
     InvalidUrl,
