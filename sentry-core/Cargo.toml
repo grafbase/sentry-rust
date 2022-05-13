@@ -35,7 +35,6 @@ wasm-timer = "0.2.5"
 worker = "0.0.9"
 wasm-bindgen-futures = "0.4"
 reqwest = { version = "0.11.10" }
-thiserror = "1.0.15"
 
 [dev-dependencies]
 # Because we re-export all the public API in `sentry`, we actually run all the
