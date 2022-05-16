@@ -7,6 +7,13 @@ edition = "2021"
 
 [dependencies]
 sentry-core = { path = "../sentry-core" }
-surf = { version = "2", default-features = false, features = ["wasm-client"] }
 worker = { version = "0.0.9" }
 thiserror = "1.0.15"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+surf = { version = "2", default-features = false, features = ["wasm-client"] }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+surf = { version = "2", default-features = false, features = [
+    "h1-client-rustls",
+] }
