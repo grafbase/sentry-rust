@@ -2,7 +2,7 @@ use std::borrow::Cow;
 use std::fmt;
 use std::net::IpAddr;
 use std::str;
-use std::time::SystemTime;
+use wasm_timer::SystemTime;
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -42,10 +42,10 @@ impl str::FromStr for SessionStatus {
 
     fn from_str(string: &str) -> Result<Self, Self::Err> {
         Ok(match string {
-            "ok" => SessionStatus::Ok,
-            "crashed" => SessionStatus::Crashed,
-            "abnormal" => SessionStatus::Abnormal,
-            "exited" => SessionStatus::Exited,
+            "ok" => Self::Ok,
+            "crashed" => Self::Crashed,
+            "abnormal" => Self::Abnormal,
+            "exited" => Self::Exited,
             _ => return Err(ParseSessionStatusError),
         })
     }

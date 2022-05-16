@@ -13,7 +13,7 @@ use std::iter::FromIterator;
 use std::net::{AddrParseError, IpAddr};
 use std::ops;
 use std::str;
-use std::time::SystemTime;
+use wasm_timer::SystemTime;
 
 use ::debugid::{CodeId, DebugId};
 use serde::Serializer;
@@ -63,8 +63,8 @@ pub struct Values<T> {
 
 impl<T> Values<T> {
     /// Creates an empty values struct.
-    pub fn new() -> Values<T> {
-        Values { values: Vec::new() }
+    pub fn new() -> Self {
+        Self { values: Vec::new() }
     }
 
     /// Checks whether this struct is empty in both values and data.
@@ -76,13 +76,13 @@ impl<T> Values<T> {
 impl<T> Default for Values<T> {
     fn default() -> Self {
         // Default implemented manually even if <T> does not impl Default.
-        Values::new()
+        Self::new()
     }
 }
 
 impl<T> From<Vec<T>> for Values<T> {
     fn from(values: Vec<T>) -> Self {
-        Values { values }
+        Self { values }
     }
 }
 
@@ -282,12 +282,12 @@ pub struct Stacktrace {
 
 impl Stacktrace {
     /// Optionally creates a stacktrace from a list of stack frames.
-    pub fn from_frames_reversed(mut frames: Vec<Frame>) -> Option<Stacktrace> {
+    pub fn from_frames_reversed(mut frames: Vec<Frame>) -> Option<Self> {
         if frames.is_empty() {
             None
         } else {
             frames.reverse();
-            Some(Stacktrace {
+            Some(Self {
                 frames,
                 ..Default::default()
             })
@@ -306,49 +306,49 @@ pub enum ThreadId {
 }
 
 impl Default for ThreadId {
-    fn default() -> ThreadId {
-        ThreadId::Int(0)
+    fn default() -> Self {
+        Self::Int(0)
     }
 }
 
 impl<'a> From<&'a str> for ThreadId {
-    fn from(id: &'a str) -> ThreadId {
-        ThreadId::String(id.to_string())
+    fn from(id: &'a str) -> Self {
+        Self::String(id.to_string())
     }
 }
 
 impl From<String> for ThreadId {
-    fn from(id: String) -> ThreadId {
-        ThreadId::String(id)
+    fn from(id: String) -> Self {
+        Self::String(id)
     }
 }
 
 impl From<i64> for ThreadId {
-    fn from(id: i64) -> ThreadId {
-        ThreadId::Int(id as u64)
+    fn from(id: i64) -> Self {
+        Self::Int(id as u64)
     }
 }
 
 impl From<i32> for ThreadId {
-    fn from(id: i32) -> ThreadId {
-        ThreadId::Int(id as u64)
+    fn from(id: i32) -> Self {
+        Self::Int(id as u64)
     }
 }
 
 impl From<u32> for ThreadId {
-    fn from(id: u32) -> ThreadId {
-        ThreadId::Int(id as u64)
+    fn from(id: u32) -> Self {
+        Self::Int(id as u64)
     }
 }
 
 impl From<u16> for ThreadId {
-    fn from(id: u16) -> ThreadId {
-        ThreadId::Int(id as u64)
+    fn from(id: u16) -> Self {
+        Self::Int(id as u64)
     }
 }
 
 impl fmt::Display for ThreadId {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             ThreadId::Int(i) => write!(f, "{}", i),
             ThreadId::String(ref s) => write!(f, "{}", s),
@@ -370,38 +370,38 @@ impl Addr {
 impl_hex_serde!(Addr, u64);
 
 impl From<u64> for Addr {
-    fn from(addr: u64) -> Addr {
-        Addr(addr)
+    fn from(addr: u64) -> Self {
+        Self(addr)
     }
 }
 
 impl From<i32> for Addr {
-    fn from(addr: i32) -> Addr {
-        Addr(addr as u64)
+    fn from(addr: i32) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl From<u32> for Addr {
-    fn from(addr: u32) -> Addr {
-        Addr(addr as u64)
+    fn from(addr: u32) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl From<usize> for Addr {
-    fn from(addr: usize) -> Addr {
-        Addr(addr as u64)
+    fn from(addr: usize) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl<T> From<*const T> for Addr {
-    fn from(addr: *const T) -> Addr {
-        Addr(addr as u64)
+    fn from(addr: *const T) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl<T> From<*mut T> for Addr {
-    fn from(addr: *mut T) -> Addr {
-        Addr(addr as u64)
+    fn from(addr: *mut T) -> Self {
+        Self(addr as u64)
     }
 }
 
@@ -422,38 +422,38 @@ pub struct RegVal(pub u64);
 impl_hex_serde!(RegVal, u64);
 
 impl From<u64> for RegVal {
-    fn from(addr: u64) -> RegVal {
-        RegVal(addr)
+    fn from(addr: u64) -> Self {
+        Self(addr)
     }
 }
 
 impl From<i32> for RegVal {
-    fn from(addr: i32) -> RegVal {
-        RegVal(addr as u64)
+    fn from(addr: i32) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl From<u32> for RegVal {
-    fn from(addr: u32) -> RegVal {
-        RegVal(addr as u64)
+    fn from(addr: u32) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl From<usize> for RegVal {
-    fn from(addr: usize) -> RegVal {
-        RegVal(addr as u64)
+    fn from(addr: usize) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl<T> From<*const T> for RegVal {
-    fn from(addr: *const T) -> RegVal {
-        RegVal(addr as u64)
+    fn from(addr: *const T) -> Self {
+        Self(addr as u64)
     }
 }
 
 impl<T> From<*mut T> for RegVal {
-    fn from(addr: *mut T) -> RegVal {
-        RegVal(addr as u64)
+    fn from(addr: *mut T) -> Self {
+        Self(addr as u64)
     }
 }
 
@@ -499,8 +499,8 @@ pub struct CError {
 }
 
 impl From<i32> for CError {
-    fn from(number: i32) -> CError {
-        CError { number, name: None }
+    fn from(number: i32) -> Self {
+        Self { number, name: None }
     }
 }
 
@@ -541,8 +541,8 @@ pub struct PosixSignal {
 }
 
 impl From<i32> for PosixSignal {
-    fn from(number: i32) -> PosixSignal {
-        PosixSignal {
+    fn from(number: i32) -> Self {
+        Self {
             number,
             code: None,
             name: None,
@@ -552,9 +552,9 @@ impl From<i32> for PosixSignal {
 }
 
 impl From<(i32, i32)> for PosixSignal {
-    fn from(tuple: (i32, i32)) -> PosixSignal {
+    fn from(tuple: (i32, i32)) -> Self {
         let (number, code) = tuple;
-        PosixSignal {
+        Self {
             number,
             code: Some(code),
             name: None,
@@ -662,28 +662,28 @@ pub enum Level {
 }
 
 impl Default for Level {
-    fn default() -> Level {
-        Level::Info
+    fn default() -> Self {
+        Self::Info
     }
 }
 
 impl str::FromStr for Level {
     type Err = ParseLevelError;
 
-    fn from_str(string: &str) -> Result<Level, Self::Err> {
+    fn from_str(string: &str) -> Result<Self, Self::Err> {
         Ok(match string {
-            "debug" => Level::Debug,
-            "info" | "log" => Level::Info,
-            "warning" => Level::Warning,
-            "error" => Level::Error,
-            "fatal" => Level::Fatal,
+            "debug" => Self::Debug,
+            "info" | "log" => Self::Info,
+            "warning" => Self::Warning,
+            "error" => Self::Error,
+            "fatal" => Self::Fatal,
             _ => return Err(ParseLevelError),
         })
     }
 }
 
 impl fmt::Display for Level {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             Level::Debug => write!(f, "debug"),
             Level::Info => write!(f, "info"),
@@ -697,27 +697,27 @@ impl fmt::Display for Level {
 impl Level {
     /// A quick way to check if the level is `debug`.
     pub fn is_debug(&self) -> bool {
-        *self == Level::Debug
+        *self == Self::Debug
     }
 
     /// A quick way to check if the level is `info`.
     pub fn is_info(&self) -> bool {
-        *self == Level::Info
+        *self == Self::Info
     }
 
     /// A quick way to check if the level is `warning`.
     pub fn is_warning(&self) -> bool {
-        *self == Level::Warning
+        *self == Self::Warning
     }
 
     /// A quick way to check if the level is `error`.
     pub fn is_error(&self) -> bool {
-        *self == Level::Error
+        *self == Self::Error
     }
 
     /// A quick way to check if the level is `fatal`.
     pub fn is_fatal(&self) -> bool {
-        *self == Level::Fatal
+        *self == Self::Fatal
     }
 }
 
@@ -771,8 +771,8 @@ pub struct Breadcrumb {
 }
 
 impl Default for Breadcrumb {
-    fn default() -> Breadcrumb {
-        Breadcrumb {
+    fn default() -> Self {
+        Self {
             timestamp: SystemTime::now(),
             ty: breadcrumb::default_type(),
             category: Default::default(),
@@ -811,13 +811,13 @@ impl cmp::PartialOrd<IpAddr> for IpAddress {
 }
 
 impl Default for IpAddress {
-    fn default() -> IpAddress {
-        IpAddress::Auto
+    fn default() -> Self {
+        Self::Auto
     }
 }
 
 impl fmt::Display for IpAddress {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match *self {
             IpAddress::Auto => write!(f, "{{{{auto}}}}"),
             IpAddress::Exact(ref addr) => write!(f, "{}", addr),
@@ -826,17 +826,17 @@ impl fmt::Display for IpAddress {
 }
 
 impl From<IpAddr> for IpAddress {
-    fn from(addr: IpAddr) -> IpAddress {
-        IpAddress::Exact(addr)
+    fn from(addr: IpAddr) -> Self {
+        Self::Exact(addr)
     }
 }
 
 impl str::FromStr for IpAddress {
     type Err = AddrParseError;
 
-    fn from_str(string: &str) -> Result<IpAddress, AddrParseError> {
+    fn from_str(string: &str) -> Result<Self, AddrParseError> {
         match string {
-            "{{auto}}" => Ok(IpAddress::Auto),
+            "{{auto}}" => Ok(Self::Auto),
             other => other.parse().map(IpAddress::Exact),
         }
     }
@@ -1358,7 +1358,7 @@ impl Default for SpanId {
 }
 
 impl fmt::Display for SpanId {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(fmt, "{}", hex::encode(&self.0))
     }
 }
@@ -1404,7 +1404,7 @@ impl Default for TraceId {
 }
 
 impl fmt::Display for TraceId {
-    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(fmt, "{}", hex::encode(&self.0))
     }
 }
@@ -1482,7 +1482,7 @@ mod event {
     }
 
     pub fn serialize_id<S: Serializer>(uuid: &Uuid, serializer: S) -> Result<S::Ok, S::Error> {
-        serializer.serialize_some(&uuid.to_simple_ref().to_string())
+        serializer.serialize_some(&uuid.simple().to_string())
     }
 
     pub fn default_level() -> Level {
@@ -1686,7 +1686,7 @@ impl<'a> Event<'a> {
 }
 
 impl<'a> fmt::Display for Event<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "Event(id: {}, ts: {})",
@@ -1741,7 +1741,7 @@ pub struct Span {
 
 impl Default for Span {
     fn default() -> Self {
-        Span {
+        Self {
             span_id: Default::default(),
             trace_id: Default::default(),
             timestamp: Default::default(),
@@ -1759,7 +1759,7 @@ impl Default for Span {
 
 impl Span {
     /// Creates a new span with the current timestamp and random id.
-    pub fn new() -> Span {
+    pub fn new() -> Self {
         Default::default()
     }
 
@@ -1770,7 +1770,7 @@ impl Span {
 }
 
 impl fmt::Display for Span {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "Span(id: {}, ts: {})",
@@ -1845,25 +1845,25 @@ pub enum SpanStatus {
 impl str::FromStr for SpanStatus {
     type Err = ParseStatusError;
 
-    fn from_str(s: &str) -> Result<SpanStatus, Self::Err> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         Ok(match s {
-            "ok" => SpanStatus::Ok,
-            "deadline_exceeded" => SpanStatus::DeadlineExceeded,
-            "unauthenticated" => SpanStatus::Unauthenticated,
-            "permission_denied" => SpanStatus::PermissionDenied,
-            "not_found" => SpanStatus::NotFound,
-            "resource_exhausted" => SpanStatus::ResourceExhausted,
-            "invalid_argument" => SpanStatus::InvalidArgument,
-            "unimplemented" => SpanStatus::Unimplemented,
-            "unavailable" => SpanStatus::Unavailable,
-            "internal_error" => SpanStatus::InternalError,
-            "unknown_error" => SpanStatus::UnknownError,
-            "cancelled" => SpanStatus::Cancelled,
-            "already_exists" => SpanStatus::AlreadyExists,
-            "failed_precondition" => SpanStatus::FailedPrecondition,
-            "aborted" => SpanStatus::Aborted,
-            "out_of_range" => SpanStatus::OutOfRange,
-            "data_loss" => SpanStatus::DataLoss,
+            "ok" => Self::Ok,
+            "deadline_exceeded" => Self::DeadlineExceeded,
+            "unauthenticated" => Self::Unauthenticated,
+            "permission_denied" => Self::PermissionDenied,
+            "not_found" => Self::NotFound,
+            "resource_exhausted" => Self::ResourceExhausted,
+            "invalid_argument" => Self::InvalidArgument,
+            "unimplemented" => Self::Unimplemented,
+            "unavailable" => Self::Unavailable,
+            "internal_error" => Self::InternalError,
+            "unknown_error" => Self::UnknownError,
+            "cancelled" => Self::Cancelled,
+            "already_exists" => Self::AlreadyExists,
+            "failed_precondition" => Self::FailedPrecondition,
+            "aborted" => Self::Aborted,
+            "out_of_range" => Self::OutOfRange,
+            "data_loss" => Self::DataLoss,
             _ => return Err(ParseStatusError),
         })
     }
@@ -1994,7 +1994,7 @@ impl<'a> Transaction<'a> {
 }
 
 impl<'a> fmt::Display for Transaction<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "Transaction(id: {}, ts: {})",

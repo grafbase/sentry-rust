@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 use std::fmt;
 use std::str::FromStr;
-use std::time::SystemTime;
+use wasm_timer::SystemTime;
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -42,13 +42,13 @@ pub struct Auth {
 
 impl Auth {
     /// Creates an auth header from key value pairs.
-    pub fn from_pairs<'a, I, K, V>(pairs: I) -> Result<Auth, ParseAuthError>
+    pub fn from_pairs<'a, I, K, V>(pairs: I) -> Result<Self, ParseAuthError>
     where
         I: IntoIterator<Item = (K, V)>,
         K: AsRef<str>,
         V: Into<Cow<'a, str>>,
     {
-        let mut rv = Auth {
+        let mut rv = Self {
             timestamp: None,
             client: None,
             version: protocol::LATEST,
@@ -92,8 +92,8 @@ impl Auth {
     }
 
     /// Creates an auth header from a query string.
-    pub fn from_querystring(qs: &[u8]) -> Result<Auth, ParseAuthError> {
-        Auth::from_pairs(form_urlencoded::parse(qs))
+    pub fn from_querystring(qs: &[u8]) -> Result<Self, ParseAuthError> {
+        Self::from_pairs(form_urlencoded::parse(qs))
     }
 
     /// Returns the timestamp the client defined
@@ -128,7 +128,7 @@ impl Auth {
 }
 
 impl fmt::Display for Auth {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
             "Sentry sentry_key={}, sentry_version={}",
@@ -150,7 +150,7 @@ impl fmt::Display for Auth {
 impl FromStr for Auth {
     type Err = ParseAuthError;
 
-    fn from_str(s: &str) -> Result<Auth, ParseAuthError> {
+    fn from_str(s: &str) -> Result<Self, ParseAuthError> {
         let mut base_iter = s.splitn(2, ' ');
 
         let prefix = base_iter.next().unwrap_or("");
@@ -173,7 +173,7 @@ impl FromStr for Auth {
     }
 }
 
-pub(crate) fn auth_from_dsn_and_client(dsn: &Dsn, client: Option<&str>) -> Auth {
+pub fn auth_from_dsn_and_client(dsn: &Dsn, client: Option<&str>) -> Auth {
     Auth {
         timestamp: Some(SystemTime::now()),
         client: client.map(|x| x.to_string()),

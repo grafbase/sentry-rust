@@ -31,7 +31,7 @@ macro_rules! impl_str_de {
             where
                 D: ::serde::de::Deserializer<'de>,
             {
-                <::std::borrow::Cow<str>>::deserialize(deserializer)?
+                <::std::borrow::Cow<'_, str>>::deserialize(deserializer)?
                     .parse()
                     .map_err(::serde::de::Error::custom)
             }
@@ -72,7 +72,7 @@ mod str_tests {
     }
 
     impl fmt::Display for Test {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "test")
         }
     }
@@ -100,7 +100,7 @@ mod str_tests {
 macro_rules! impl_hex_ser {
     ($type:ident) => {
         impl ::std::fmt::Display for $type {
-            fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+            fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
                 write!(f, "{:#x}", self.0)
             }
         }
@@ -143,7 +143,7 @@ macro_rules! impl_hex_de {
                 impl<'de> ::serde::de::Visitor<'de> for HexVisitor {
                     type Value = $type;
 
-                    fn expecting(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                    fn expecting(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
                         write!(f, "a number or hex string")
                     }
 
