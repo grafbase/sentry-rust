@@ -50,47 +50,11 @@
 #![doc(html_logo_url = "https://sentry-brand.storage.googleapis.com/sentry-glyph-black.png")]
 #![warn(missing_docs)]
 
-// macros; these need to be first to be used by other modules
-#[macro_use]
-mod macros;
-
-mod api;
-mod breadcrumbs;
-mod clientoptions;
-mod constants;
-mod error;
-mod futures;
-mod hub;
-mod integration;
+#[allow(missing_docs)]
+pub mod constants;
 mod intodsn;
-mod performance;
-mod scope;
-mod transport;
 
-// public api or exports from this crate
-pub use crate::api::*;
-pub use crate::breadcrumbs::IntoBreadcrumbs;
-pub use crate::clientoptions::{ClientOptions, SessionMode};
-pub use crate::error::{capture_error, event_from_error, parse_type_from_debug};
-pub use crate::futures::{SentryFuture, SentryFutureExt};
-pub use crate::hub::Hub;
-pub use crate::integration::Integration;
 pub use crate::intodsn::IntoDsn;
-pub use crate::performance::*;
-pub use crate::scope::{Scope, ScopeGuard};
-pub use crate::transport::{Transport, TransportFactory};
-
-// client feature
-#[cfg(feature = "client")]
-mod client;
-#[cfg(feature = "client")]
-mod session;
-#[cfg(feature = "client")]
-pub use crate::client::Client;
-
-// test utilities
-#[cfg(feature = "test")]
-pub mod test;
 
 #[cfg(all(feature = "profiling", not(target_os = "windows")))]
 mod profiling;
