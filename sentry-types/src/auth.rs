@@ -1,7 +1,7 @@
 use std::borrow::Cow;
 use std::fmt;
 use std::str::FromStr;
-use std::time::SystemTime;
+use wasm_timer::SystemTime;
 
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
@@ -173,7 +173,8 @@ impl FromStr for Auth {
     }
 }
 
-pub(crate) fn auth_from_dsn_and_client(dsn: &Dsn, client: Option<&str>) -> Auth {
+#[allow(missing_docs)]
+pub fn auth_from_dsn_and_client(dsn: &Dsn, client: Option<&str>) -> Auth {
     Auth {
         timestamp: Some(SystemTime::now()),
         client: client.map(|x| x.to_string()),

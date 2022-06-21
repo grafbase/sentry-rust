@@ -1,17 +1,3 @@
 [workspace]
 resolver = "2"
-members = [
-    "sentry",
-    "sentry-actix",
-    "sentry-anyhow",
-    "sentry-backtrace",
-    "sentry-contexts",
-    "sentry-core",
-    "sentry-debug-images",
-    "sentry-log",
-    "sentry-panic",
-    "sentry-slog",
-    "sentry-tower",
-    "sentry-tracing",
-    "sentry-types",
-]
+members = ["sentry-cf-worker", "sentry-core", "sentry-types"]
