@@ -459,7 +459,8 @@ impl From<Transaction<'static>> for Envelope {
 #[cfg(test)]
 mod test {
     use std::str::FromStr;
-    use std::time::{Duration, SystemTime};
+    use std::time::Duration;
+    use wasm_timer::SystemTime;
 
     use time::format_description::well_known::Rfc3339;
     use time::OffsetDateTime;

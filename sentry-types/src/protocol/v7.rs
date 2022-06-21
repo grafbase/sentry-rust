@@ -13,7 +13,7 @@ use std::iter::FromIterator;
 use std::net::{AddrParseError, IpAddr};
 use std::ops;
 use std::str;
-use std::time::SystemTime;
+use wasm_timer::SystemTime;
 
 use self::debugid::{CodeId, DebugId};
 use serde::Serializer;

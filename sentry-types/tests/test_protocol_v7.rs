@@ -1,7 +1,8 @@
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use std::time::{Duration, SystemTime};
+use std::time::Duration;
 use uuid::Uuid;
+use wasm_timer::SystemTime;
 
 use sentry_types::protocol::v7;
 
